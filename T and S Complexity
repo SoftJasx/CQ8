@@ -1,0 +1,15 @@
+Time complexity：
+Outer Loop: There is an outer loop that iterates from 1 to n. Thus, it executes n times.
+Inner Loops: Inside the outer loop, there are two inner loops:
+The first inner loop is responsible for printing the spaces. In the worst case (first iteration), it prints n - 1 spaces, and in the best case (last iteration), it prints 0 spaces. On average, it prints spaces n/ 2 times for each row.
+The second inner loop prints the # characters. It starts from 1 in the first iteration and goes up to n in the final iteration. Hence, it prints an average of n/2 hashes per row.
+The total number of iterations for each inner loop per row is approximately n (summing the average number of spaces and hashes). 
+Since each of these loops runs within the outer loop which itself runs n times, the number of total operations is roughly proportional to n*n = n^2.
+Therefore, the time complexity is O(n^2).
+
+Space complexity:
+Local Variables: The space taken up by local variables (i, j, k) is constant, irrespective of n.
+Output: The staircase output itself, although large, is not typically considered part of space complexity unless it's stored entirely in memory at once before outputting. 
+In this case, each line is output directly without storing the whole staircase, so it doesn't add to the space complexity.
+No Additional Data Structures: The implementation does not use any data structures that scale with the size of the input.
+Since the memory usage does not scale with n, the space complexity is O(1).
