@@ -1,0 +1,142 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+class Result {
+
+    /*
+     * Complete the 'shortestPath' function below.
+     *
+     * The function is expected to return an INTEGER_ARRAY.
+     * The function accepts following parameters:
+     *  1. 2D_INTEGER_ARRAY a
+     *  2. 2D_INTEGER_ARRAY queries
+     */
+
+    public static List<Integer> shortestPath(List<List<Integer>> a, List<List<Integer>> queries) {
+    List<Integer> results = new ArrayList<>();
+
+    for (List<Integer> query : queries) {
+        int startRow = query.get(0);
+        int startCol = query.get(1);
+        int endRow = query.get(2);
+        int endCol = query.get(3);
+
+        int[][] distances = new int[a.size()][a.get(0).size()];
+        for (int[] row : distances) Arrays.fill(row, Integer.MAX_VALUE);
+
+        distances[startRow][startCol] = a.get(startRow).get(startCol);
+        PriorityQueue<Cell> minHeap = new PriorityQueue<>();
+        minHeap.add(new Cell(startRow, startCol, distances[startRow][startCol]));
+
+        while (!minHeap.isEmpty()) {
+            Cell current = minHeap.poll();
+
+            // Reached destination
+            if (current.row == endRow && current.col == endCol) {
+                results.add(distances[endRow][endCol]);
+                break;
+            }
+
+            // Visiting neighbors
+            visitCell(a, current.row + 1, current.col, current, distances, minHeap);
+            visitCell(a, current.row - 1, current.col, current, distances, minHeap);
+            visitCell(a, current.row, current.col + 1, current, distances, minHeap);
+            visitCell(a, current.row, current.col - 1, current, distances, minHeap);
+        }
+    }
+
+    return results;
+}
+
+private static void visitCell(List<List<Integer>> a, int row, int col, Cell current, int[][] distances, PriorityQueue<Cell> minHeap) {
+    if (row >= 0 && row < a.size() && col >= 0 && col < a.get(0).size()) {
+        int newDist = distances[current.row][current.col] + a.get(row).get(col);
+        if (newDist < distances[row][col]) {
+            distances[row][col] = newDist;
+            minHeap.add(new Cell(row, col, newDist));
+        }
+    }
+}
+
+static class Cell implements Comparable<Cell> {
+    int row;
+    int col;
+    int cost;
+
+    Cell(int row, int col, int cost) {
+        this.row = row;
+        this.col = col;
+        this.cost = cost;
+    }
+
+    @Override
+    public int compareTo(Cell other) {
+        return Integer.compare(this.cost, other.cost);
+    }
+}
+
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        String[] firstMultipleInput = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+
+        int n = Integer.parseInt(firstMultipleInput[0]);
+
+        int m = Integer.parseInt(firstMultipleInput[1]);
+
+        List<List<Integer>> a = new ArrayList<>();
+
+        IntStream.range(0, n).forEach(i -> {
+            try {
+                a.add(
+                    Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                        .map(Integer::parseInt)
+                        .collect(toList())
+                );
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        int q = Integer.parseInt(bufferedReader.readLine().trim());
+
+        List<List<Integer>> queries = new ArrayList<>();
+
+        IntStream.range(0, q).forEach(i -> {
+            try {
+                queries.add(
+                    Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                        .map(Integer::parseInt)
+                        .collect(toList())
+                );
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        List<Integer> result = Result.shortestPath(a, queries);
+
+        bufferedWriter.write(
+            result.stream()
+                .map(Object::toString)
+                .collect(joining("\n"))
+            + "\n"
+        );
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
