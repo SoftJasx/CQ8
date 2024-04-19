@@ -1,0 +1,34 @@
+This function initializes a min-heap and a distance array to keep track of the shortest path from the start to each cell. 
+It then uses Dijkstra's algorithm to find the shortest path to the destination.
+includes a Cell class to keep track of the row, column, and cost (distance) for each cell, and uses a PriorityQueue (min-heap) to ensure the cell with the lowest cost is processed first. 
+The visitCell method checks if a neighbor cell is within bounds and updates the distances and heap accordingly. 
+Each cell is only added to the priority queue if the new distance is less than the previously recorded distance.
+For each query, we calculate the shortest path from the start to the end coordinates using a distance matrix to keep track of the minimum distance to reach each cell.
+We use a priority queue (min-heap) to always choose the cell with the lowest distance to expand next.
+We continue the search until we reach the end cell, at which point we record the distance found.
+This is done for each query, and the results are returned.
+
+Pseudo-Code:
+
+function shortestPath(a, queries):
+    initialize results list
+
+    for each query in queries:
+        extract start and end coordinates from the query
+        initialize distances matrix with infinity
+        set distance of the start cell to its weight
+        create a priority queue and add the start cell to it
+
+        while priority queue is not empty:
+            poll the cell with the smallest distance from the priority queue
+            if the cell is the end cell:
+                add its distance to the results and break the loop
+            otherwise:
+                for each of the 4 possible directions (up, down, left, right):
+                    calculate the new coordinates
+                    if the new cell is valid and not visited:
+                        calculate the new distance
+                        if the new distance is smaller than the recorded distance:
+                            update the distance of the new cell
+                            add the new cell to the priority queue with the updated distance
+    return results
